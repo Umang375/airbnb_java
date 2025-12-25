@@ -12,4 +12,6 @@ public interface HotelSVC {
 
     HotelDTO updateHotelDTO(Long Id, HotelDTO hotelDTO);
 
+    void activateHotel(Long Id);
+
 }

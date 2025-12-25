@@ -45,8 +45,19 @@ public class HotelSVCImpl implements HotelSVC{
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + Id));
 
         modelMapper.map(hotelDTO, hotel);
+        hotel.setId(Id);
         hotel = hotelRepository.save(hotel);
         return modelMapper.map(hotel, HotelDTO.class);
+    }
+
+    @Override
+    public void activateHotel(Long Id) {
+        log.info("Getting the hotel with ID : {}", Id);
+        Hotel hotel = hotelRepository
+                .findById(Id)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + Id));
+        hotel.setIsActive(true);
+        //TODO : create inventory for all the rooms for the Hotel
     }
 
     @Override
