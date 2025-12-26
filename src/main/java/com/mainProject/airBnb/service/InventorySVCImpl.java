@@ -22,7 +22,7 @@ public class InventorySVCImpl implements InventorySVC {
         LocalDate today = LocalDate.now();
         LocalDate endDate = today.plusYears(1);
         for (; !today.isAfter(endDate); today=today.plusDays(1)) {
-            Inventory inventory = Inventory.b
+            Inventory inventory = Inventory.builder()
                     .hotel(room.getHotel())
                     .room(room)
                     .bookedCount(0)

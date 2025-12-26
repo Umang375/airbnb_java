@@ -27,6 +27,8 @@ public class Hotel {
     @Column(nullable = false)
     private String name;
 
+    private String city;
+
     @Column(columnDefinition = "TEXT[]")
     private String[] photos;
 

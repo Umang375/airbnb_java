@@ -2,6 +2,7 @@ package com.mainProject.airBnb.service;
 
 import com.mainProject.airBnb.dto.HotelDTO;
 import com.mainProject.airBnb.entity.Hotel;
+import com.mainProject.airBnb.entity.Room;
 import com.mainProject.airBnb.exception.ResourceNotFoundException;
 import com.mainProject.airBnb.repo.HotelRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class HotelSVCImpl implements HotelSVC{
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
+    private final InventorySVC inventorySVC;
 
     @Override
     public HotelDTO createNewHotel(HotelDTO hotelDTO){
@@ -57,15 +59,22 @@ public class HotelSVCImpl implements HotelSVC{
                 .findById(Id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + Id));
         hotel.setIsActive(true);
-        //TODO : create inventory for all the rooms for the Hotel
+        //assuming I didi it only once
+
+        for (Room room : hotel.getRooms()){
+            inventorySVC.initializeRoomForAYear(room);
+        }
     }
 
     @Override
     public Void deleteHotelById(Long Id){
-        boolean exists = hotelRepository.existsById(Id);
-        if(!exists) throw new ResourceNotFoundException("Hotel not found with the ID : " + Id);
+        Hotel hotel = hotelRepository
+                .findById(Id)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + Id));
 
-        //TODO: delete the future inventories for this hotel
+        for (Room room : hotel.getRooms()){
+            inventorySVC.deleteFutureInventories(room);
+        }
         return null;
     }
 }
