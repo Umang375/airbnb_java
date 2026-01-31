@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+
 @Slf4j
 public class RoomSVCImpl implements RoomSVC{
 
@@ -26,7 +27,7 @@ public class RoomSVCImpl implements RoomSVC{
     private final InventorySVC inventoryService;
     private final ModelMapper modelMapper;
 
-    @Override
+    @Override 
     public RoomDTO createNewRoom(Long hotelId, RoomDTO roomDto) {
         log.info("Creating a new room in hotel with ID: {}", hotelId);
         Hotel hotel = hotelRepository
@@ -75,5 +76,12 @@ public class RoomSVCImpl implements RoomSVC{
         inventoryService.deleteFutureInventories(room);
         roomRepository.deleteById(roomId);
     }
+
+//    @Override
+//    @Transactional
+//    public void activateHotel(Long HotelId){
+//        log.info("Activating the hotel with ID: {}", HotelId);
+//        H
+//    }
 }
 

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -53,13 +54,14 @@ public class HotelSVCImpl implements HotelSVC{
     }
 
     @Override
+    @Transactional
     public void activateHotel(Long Id) {
         log.info("Getting the hotel with ID : {}", Id);
         Hotel hotel = hotelRepository
                 .findById(Id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + Id));
         hotel.setIsActive(true);
-        //assuming I didi it only once
+        //assuming I did it only once
 
         for (Room room : hotel.getRooms()){
             inventorySVC.initializeRoomForAYear(room);
@@ -67,14 +69,14 @@ public class HotelSVCImpl implements HotelSVC{
     }
 
     @Override
-    public Void deleteHotelById(Long Id){
+    @Transactional
+    public void deleteHotelById(Long Id){
         Hotel hotel = hotelRepository
                 .findById(Id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + Id));
 
-        for (Room room : hotel.getRooms()){
+        for (Room room : hotel.getRooms()) {
             inventorySVC.deleteFutureInventories(room);
         }
-        return null;
     }
 }
