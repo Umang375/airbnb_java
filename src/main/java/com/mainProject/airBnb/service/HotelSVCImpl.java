@@ -5,6 +5,7 @@ import com.mainProject.airBnb.entity.Hotel;
 import com.mainProject.airBnb.entity.Room;
 import com.mainProject.airBnb.exception.ResourceNotFoundException;
 import com.mainProject.airBnb.repo.HotelRepository;
+import com.mainProject.airBnb.repo.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -19,6 +20,7 @@ public class HotelSVCImpl implements HotelSVC{
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
     private final InventorySVC inventorySVC;
+    private RoomRepository roomRepository;
 
     @Override
     public HotelDTO createNewHotel(HotelDTO hotelDTO){
@@ -76,7 +78,9 @@ public class HotelSVCImpl implements HotelSVC{
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + Id));
 
         for (Room room : hotel.getRooms()) {
-            inventorySVC.deleteFutureInventories(room);
+            inventorySVC.deleteAllInventories(room);
+            roomRepository.deleteById(room.getId());
         }
+        hotelRepository.deleteById(Id);
     }
 }

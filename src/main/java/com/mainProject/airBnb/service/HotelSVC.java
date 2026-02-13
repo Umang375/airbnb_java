@@ -8,7 +8,7 @@ public interface HotelSVC {
 
     HotelDTO getHotelById(Long Id);
 
-    Void deleteHotelById(Long Id);
+    void deleteHotelById(Long Id);
 
     HotelDTO updateHotelDTO(Long Id, HotelDTO hotelDTO);
 
