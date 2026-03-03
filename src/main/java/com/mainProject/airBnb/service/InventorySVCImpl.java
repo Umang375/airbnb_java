@@ -1,14 +1,22 @@
 package com.mainProject.airBnb.service;
 
+import com.mainProject.airBnb.dto.HotelDTO;
+import com.mainProject.airBnb.dto.HotelSearchDto;
+import com.mainProject.airBnb.entity.Hotel;
 import com.mainProject.airBnb.entity.Inventory;
 import com.mainProject.airBnb.entity.Room;
 import com.mainProject.airBnb.repo.InventoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +24,7 @@ import java.time.LocalDate;
 public class InventorySVCImpl implements InventorySVC {
 
     private final InventoryRepository inventoryRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public void initializeRoomForAYear(Room room) {
@@ -41,5 +50,21 @@ public class InventorySVCImpl implements InventorySVC {
     public void deleteAllInventories(Room room) {
         LocalDate today = LocalDate.now();
         inventoryRepository.deleteByRoom(room);
+    }
+
+    @Override
+    public Page<HotelDTO> searchHotel(HotelSearchDto hotelSearchDto){
+        Pageable pageable = PageRequest.of(hotelSearchDto.getPage(), hotelSearchDto.getSize());
+        long dateCount = ChronoUnit.DAYS.between(hotelSearchDto.getStartDate(), hotelSearchDto.getStartDate());
+        Page<Hotel> hotels =  inventoryRepository.findHotelWithAvailableInventory(
+                hotelSearchDto.getCity(),
+                hotelSearchDto.getStartDate(),
+                hotelSearchDto.getEndDate(),
+                hotelSearchDto.getRoomCount(),
+                dateCount,
+                pageable
+        );
+
+        return hotels.map((ele)-> modelMapper.map(ele, HotelDTO.class));
     }
 }

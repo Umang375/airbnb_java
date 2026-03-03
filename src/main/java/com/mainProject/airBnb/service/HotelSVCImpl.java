@@ -1,6 +1,7 @@
 package com.mainProject.airBnb.service;
 
 import com.mainProject.airBnb.dto.HotelDTO;
+import com.mainProject.airBnb.dto.HotelInfoDto;
 import com.mainProject.airBnb.entity.Hotel;
 import com.mainProject.airBnb.entity.Room;
 import com.mainProject.airBnb.exception.ResourceNotFoundException;
@@ -68,6 +69,11 @@ public class HotelSVCImpl implements HotelSVC{
         for (Room room : hotel.getRooms()){
             inventorySVC.initializeRoomForAYear(room);
         }
+    }
+
+    @Override
+    public HotelInfoDto getHotelInfoById() {
+
     }
 
     @Override

@@ -2,16 +2,15 @@ package com.mainProject.airBnb.controller;
 
 
 import com.mainProject.airBnb.dto.HotelDTO;
+import com.mainProject.airBnb.dto.HotelInfoDto;
 import com.mainProject.airBnb.dto.HotelSearchDto;
 import com.mainProject.airBnb.entity.Hotel;
+import com.mainProject.airBnb.service.HotelSVC;
 import com.mainProject.airBnb.service.InventorySVC;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,12 +20,17 @@ import java.util.List;
 public class HotelBrowserController {
 
     private final InventorySVC is;
+    private final HotelSVC hs;
 
     @GetMapping("/search")
     public ResponseEntity<Page<HotelDTO>> searchHotel(@RequestBody HotelSearchDto Hotelsearch){
-        Page<HotelDTO> page = is.searchHotels(hotelSearch);
+        Page<HotelDTO> page = is.searchHotel(Hotelsearch);
+        return ResponseEntity.ok(page);
+    }
 
+    @GetMapping("/{hotelId)/info")
+    public ResponseEntity<HotelInfoDto> getHotelInfo(@PathVariable Long hotelId){
 
-        return page;
+        return ResponseEntity.ok(hs.getHotelInfoById());
     }
 }
