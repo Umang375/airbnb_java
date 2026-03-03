@@ -73,7 +73,7 @@ public class HotelSVCImpl implements HotelSVC{
 
     @Override
     public HotelInfoDto getHotelInfoById() {
-
+        return
     }
 
     @Override
