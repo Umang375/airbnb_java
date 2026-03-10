@@ -2,6 +2,7 @@ package com.mainProject.airBnb.service;
 
 import com.mainProject.airBnb.dto.HotelDTO;
 import com.mainProject.airBnb.dto.HotelInfoDto;
+import com.mainProject.airBnb.dto.RoomDTO;
 import com.mainProject.airBnb.entity.Hotel;
 import com.mainProject.airBnb.entity.Room;
 import com.mainProject.airBnb.exception.ResourceNotFoundException;
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Service
@@ -72,9 +75,26 @@ public class HotelSVCImpl implements HotelSVC{
     }
 
     @Override
-    public HotelInfoDto getHotelInfoById() {
-        return
+    public HotelInfoDto getHotelInfoById(Long hotelId) {
+        Hotel hotel = hotelRepository
+                .findById(hotelId)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + hotelId));
+
+        List<RoomDTO> rooms = hotel.getRooms().stream().map((ele) -> modelMapper.map(ele, RoomDTO.class)).toList();
+
+        return new HotelInfoDto(modelMapper.map(hotel, HotelDTO.class), rooms);
     }
+
+//    @Override
+//    public HotelInfoDto getHotelInfoById(Long hotelId) {
+//        Hotel hotel = hotelRepository
+//                .findById(hotelId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + hotelId));
+//
+//        List<RoomDTO> rooms = hotel.getRooms().stream().map((ele) -> modelMapper.map(ele, RoomDTO.class)).toList();
+//
+//        return new HotelInfoDto(modelMapper.map(hotel, HotelDTO.class), rooms);
+//    }
 
     @Override
     @Transactional
