@@ -10,7 +10,7 @@ public interface HotelSVC {
 
     HotelDTO getHotelById(Long Id);
 
-    HotelInfoDto getHotelInfoById(Long hotelId);
+    HotelInfoDto  getHotelInfoById(Long hotelId);
 
     void deleteHotelById(Long Id);
 
