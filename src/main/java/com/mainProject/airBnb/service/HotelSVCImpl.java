@@ -80,21 +80,13 @@ public class HotelSVCImpl implements HotelSVC{
                 .findById(hotelId)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + hotelId));
 
-        List<RoomDTO> rooms = hotel.getRooms().stream().map((ele) -> modelMapper.map(ele, RoomDTO.class)).toList();
+        List<RoomDTO> rooms = hotel.getRooms()
+                .stream()
+                .map((ele) -> modelMapper.map(ele, RoomDTO.class))
+                .toList();
 
         return new HotelInfoDto(modelMapper.map(hotel, HotelDTO.class), rooms);
     }
-
-//    @Override
-//    public HotelInfoDto getHotelInfoById(Long hotelId) {
-//        Hotel hotel = hotelRepository
-//                .findById(hotelId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + hotelId));
-//
-//        List<RoomDTO> rooms = hotel.getRooms().stream().map((ele) -> modelMapper.map(ele, RoomDTO.class)).toList();
-//
-//        return new HotelInfoDto(modelMapper.map(hotel, HotelDTO.class), rooms);
-//    }
 
     @Override
     @Transactional

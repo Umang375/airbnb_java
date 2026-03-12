@@ -48,14 +48,13 @@ public class InventorySVCImpl implements InventorySVC {
 
     @Override
     public void deleteAllInventories(Room room) {
-        LocalDate today = LocalDate.now();
         inventoryRepository.deleteByRoom(room);
     }
 
     @Override
     public Page<HotelDTO> searchHotel(HotelSearchDto hotelSearchDto){
         Pageable pageable = PageRequest.of(hotelSearchDto.getPage(), hotelSearchDto.getSize());
-        long dateCount = ChronoUnit.DAYS.between(hotelSearchDto.getStartDate(), hotelSearchDto.getStartDate());
+        long dateCount = ChronoUnit.DAYS.between(hotelSearchDto.getStartDate(), hotelSearchDto.getStartDate()) + 1 ;
         Page<Hotel> hotels =  inventoryRepository.findHotelWithAvailableInventory(
                 hotelSearchDto.getCity(),
                 hotelSearchDto.getStartDate(),

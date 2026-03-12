@@ -28,9 +28,9 @@ public class HotelBrowserController {
         return ResponseEntity.ok(page);
     }
 
-    @GetMapping("/{hotelId)/info")
+    @GetMapping("/{hotelId}/info")
     public ResponseEntity<HotelInfoDto> getHotelInfo(@PathVariable Long hotelId){
 
-        return ResponseEntity.ok(hs.getHotelInfoById());
+        return ResponseEntity.ok(hs.getHotelInfoById(hotelId));
     }
 }
