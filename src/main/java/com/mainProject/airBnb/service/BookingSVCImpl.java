@@ -66,6 +66,7 @@ public class BookingSVCImpl implements BookingSVC{
                 .bookingStatus(BookingStatus.RESERVED)
                 .hotel(hotel)
                 .room(room)
+                .vrvk
                 .checkInDate(br.getCheckInDate())
                 .checkOutDate(br.getCheckOutDate())
                 .user(getCurrentUser())
