@@ -31,7 +31,7 @@ public class BookingSVCImpl implements BookingSVC{
     private final BookingRepo brp;
     private final HotelRepository hrp;
     private final RoomRepository rrp;
-    private final InventoryRepository irp;
+    private final InventoryRepository ip;
 
     @Override
     @Transactional
@@ -45,7 +45,7 @@ public class BookingSVCImpl implements BookingSVC{
                 new ResourceNotFoundException("Room not found")
                 );
 
-        List<Inventory> inventoryList = irp.findAndLockAvailableInventory(
+        List<Inventory> inventoryList = ip.findAndLockAvailableInventory(
                 room.getId(),
                 br.getCheckInDate(),
                 br.getCheckOutDate(),
@@ -61,12 +61,11 @@ public class BookingSVCImpl implements BookingSVC{
         for(Inventory inven : inventoryList){
             inven.setBookedCount(inven.getBookedCount() + br.getRoomsCount());
         }
-        irp.saveAll(inventoryList);
+        ip.saveAll(inventoryList);
         Booking booking = Booking.builder()
                 .bookingStatus(BookingStatus.RESERVED)
                 .hotel(hotel)
                 .room(room)
-                .vrvk
                 .checkInDate(br.getCheckInDate())
                 .checkOutDate(br.getCheckOutDate())
                 .user(getCurrentUser())
