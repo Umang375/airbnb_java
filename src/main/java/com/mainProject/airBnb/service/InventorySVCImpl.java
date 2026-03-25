@@ -34,6 +34,7 @@ public class InventorySVCImpl implements InventorySVC {
             Inventory inventory = Inventory.builder()
                     .hotel(room.getHotel())
                     .room(room)
+                    .reservedCount(0)
                     .bookedCount(0)
                     .city(room.getHotel().getCity())
                     .date(today)
@@ -55,7 +56,7 @@ public class InventorySVCImpl implements InventorySVC {
     public Page<HotelDTO> searchHotel(HotelSearchDto hotelSearchDto){
         Pageable pageable = PageRequest.of(hotelSearchDto.getPage(), hotelSearchDto.getSize());
         long dateCount = ChronoUnit.DAYS.between(hotelSearchDto.getStartDate(), hotelSearchDto.getStartDate()) + 1 ;
-        Page<Hotel> hotels =  inventoryRepository.findHotelWithAvailableInventory(
+        Page<Hotel> hotels =  inventoryRepository.findHotelsWithAvailableInventory(
                 hotelSearchDto.getCity(),
                 hotelSearchDto.getStartDate(),
                 hotelSearchDto.getEndDate(),
