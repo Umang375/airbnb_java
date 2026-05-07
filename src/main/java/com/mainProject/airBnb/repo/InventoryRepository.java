@@ -36,7 +36,7 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
                 @Param("dateCount") Long dateCount,
                 Pageable pageable
         );
-
+ 
         @Query("""
             SELECT i
             FROM Inventory i
