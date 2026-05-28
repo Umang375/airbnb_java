@@ -1,6 +1,8 @@
 package com.mainProject.airBnb.repo;
 
 import com.mainProject.airBnb.dto.HotelPriceDto;
+import com.mainProject.airBnb.entity.Hotel;
+import com.mainProject.airBnb.entity.HotelMinPrice;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,11 +10,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
-public interface HotelMinPriceRepo extends JpaRepository <HotelMinPriceRepo, Long>{
+public interface HotelMinPriceRepo extends JpaRepository <HotelMinPrice, Long>{
 
     @Query("""
-            SELECT com.mainProject.airBnb.dto.HotelPriceDto(i.hotel, AVG(i.price))
+            SELECT new com.mainProject.airBnb.dto.HotelPriceDto(i.hotel, AVG(i.price))
             FROM HotelMinPrice i 
             WHERE i.hotel.city = :city 
                 AND i.date BETWEEN :startDate AND :endDate
@@ -27,4 +30,6 @@ public interface HotelMinPriceRepo extends JpaRepository <HotelMinPriceRepo, Lon
             @Param("dateCount") Long dateCount,
             Pageable pageable
     );
+
+    Optional<HotelMinPrice> findByHotelAndDate(Hotel hotel, LocalDate date);
 }
