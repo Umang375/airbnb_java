@@ -6,10 +6,13 @@ import com.mainProject.airBnb.dto.GuestDto;
 import com.mainProject.airBnb.entity.*;
 import com.mainProject.airBnb.entity.emuns.BookingStatus;
 import com.mainProject.airBnb.exception.ResourceNotFoundException;
+import com.mainProject.airBnb.exception.UnAuthorizedException;
 import com.mainProject.airBnb.repo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,6 +85,11 @@ public class BookingSVCImpl implements BookingSVC{
         Booking booking = brp.findById(bookingId).orElseThrow(() ->
                 new ResourceNotFoundException("Booking not found with id: "+bookingId));
 
+        User user = getCurrentUser();
+        if(! user.equals(booking.getUser())){
+            throw new UnAuthorizedException("User is not verified for the booking" + user.getId());
+        }
+
         if(hasBookingExpired(booking)){
             throw new IllegalStateException("Booking has already expired");
         }
@@ -108,9 +116,8 @@ public class BookingSVCImpl implements BookingSVC{
     }
 
     private User getCurrentUser() {
-        User user = new User();
-        user.setId(1L);
-        return user;
+
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 }

@@ -13,15 +13,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService, UserDetailsService {
 
-    private final UserRepo userRepository;
+    private final UserRepo userRepo;
 
     @Override
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id: "+id));
+        return userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id: "+id));
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username).orElse(null);
+        return userRepo.findByEmail(username).orElse(null);
     }
 }

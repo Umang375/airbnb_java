@@ -5,12 +5,15 @@ import com.mainProject.airBnb.dto.HotelInfoDto;
 import com.mainProject.airBnb.dto.RoomDTO;
 import com.mainProject.airBnb.entity.Hotel;
 import com.mainProject.airBnb.entity.Room;
+import com.mainProject.airBnb.entity.User;
 import com.mainProject.airBnb.exception.ResourceNotFoundException;
+import com.mainProject.airBnb.exception.UnAuthorizedException;
 import com.mainProject.airBnb.repo.HotelRepository;
 import com.mainProject.airBnb.repo.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +34,13 @@ public class HotelSVCImpl implements HotelSVC{
         log.info("Created a new hotel with name : {} ", hotelDTO.getName());
         Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
         hotel.setIsActive(false);
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(!user.equals(hotel.getOwner())){
+            throw new UnAuthorizedException("Hotel belongs to other owner");
+        }
+
         hotel = hotelRepository.save(hotel);
         log.info("Created a new hotel with name : {} ", hotelDTO.getId());
         return modelMapper.map(hotel, HotelDTO.class);
@@ -53,6 +63,11 @@ public class HotelSVCImpl implements HotelSVC{
                 .findById(Id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + Id));
 
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(!user.equals(hotel.getOwner())){
+            throw new UnAuthorizedException("Hotel belongs to other owner");
+        }
         modelMapper.map(hotelDTO, hotel);
         hotel.setId(Id);
         hotel = hotelRepository.save(hotel);
@@ -66,6 +81,12 @@ public class HotelSVCImpl implements HotelSVC{
         Hotel hotel = hotelRepository
                 .findById(Id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + Id));
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(!user.equals(hotel.getOwner())){
+            throw new UnAuthorizedException("Hotel belongs to other owner");
+        }
+
         hotel.setIsActive(true);
         //assuming I did it only once
 
@@ -94,6 +115,12 @@ public class HotelSVCImpl implements HotelSVC{
         Hotel hotel = hotelRepository
                 .findById(Id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with the ID : " + Id));
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(!user.equals(hotel.getOwner())){
+            throw new UnAuthorizedException("Hotel belongs to other owner");
+        }
 
         for (Room room : hotel.getRooms()) {
             inventorySVC.deleteAllInventories(room);
