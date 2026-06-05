@@ -2,8 +2,11 @@ package com.mainProject.airBnb.config;
 
 import com.mainProject.airBnb.security.JWTAuthFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
@@ -13,7 +16,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import java.io.IOException;
 
 import static com.mainProject.airBnb.entity.emuns.Role.HOTEL_MANAGER;
 
@@ -21,6 +28,10 @@ import static com.mainProject.airBnb.entity.emuns.Role.HOTEL_MANAGER;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver handlerExceptionResolver;
+
 
     private final JWTAuthFilter jwtAuthFilter;
     @Bean
@@ -34,7 +45,8 @@ public class WebSecurityConfig {
                         .requestMatchers( "/auth/** ").anonymous()
                         .requestMatchers( "/bookings/ ** ").authenticated()
                         .anyRequest().permitAll()
-                );
+                )
+                .exceptionHandling(exHandlingConfig -> exHandlingConfig.accessDeniedHandler(accessDeniedHandler()));
 
         return httpSecurity.build();
 
@@ -49,4 +61,12 @@ public class WebSecurityConfig {
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration){
         return authenticationConfiguration.getAuthenticationManager();
     }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler(){
+        return (request, response, accessDeniedException) ->  {
+            handlerExceptionResolver.resolveException(request, response, null, accessDeniedException);
+        };
+}
+
 }
